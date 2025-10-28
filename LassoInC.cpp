@@ -6,12 +6,20 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 double soft_c(double a, double lambda){
   // Your function code goes here
+  if (a >  lambda) return a - lambda;
+  if (a < -lambda) return a + lambda;
+  return 0.0;
 }
 
 // Lasso objective function, returns scalar
 // [[Rcpp::export]]
 double lasso_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::colvec& beta, double lambda){
   // Your function code goes here
+  const double n = static_cast<double>(Xtilde.n_rows);
+  arma::colvec r = Ytilde - Xtilde * beta;
+  double loss = arma::dot(r, r) / (2.0 * n);
+  double pen  = lambda * arma::accu(arma::abs(beta));
+  return loss + pen;
 }
 
 // Lasso coordinate-descent on standardized data with one lamdba. Returns a vector beta.
