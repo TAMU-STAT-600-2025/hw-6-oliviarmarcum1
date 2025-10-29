@@ -70,4 +70,35 @@ arma::colvec fitLASSOstandardized_c(const arma::mat& Xtilde, const arma::colvec&
 // [[Rcpp::export]]
 arma::mat fitLASSOstandardized_seq_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::colvec& lambda_seq, double eps = 0.001){
   // Your function code goes here
+  const int p = static_cast<int>(Xtilde.n_cols);
+  const int L = static_cast<int>(lambda_seq.n_elem);
+  const int n = static_cast<int>(Xtilde.n_rows);
+  const double nd = static_cast<double>(n);
+  const int maxit = 10000;
+  
+  arma::mat B(p, L, arma::fill::zeros);
+  arma::colvec beta(p, arma::fill::zeros);   // warm start across lambdas
+  arma::colvec r = Ytilde;                   // residual for beta=0
+  
+  for (int k = 0; k < L; ++k) {
+    const double lambda = lambda_seq[k];
+    r = Ytilde - Xtilde * beta;              // ensure consistency
+    double prev_obj = std::numeric_limits<double>::infinity();
+    
+    for (int it = 0; it < maxit; ++it) {
+      for (int j = 0; j < p; ++j) {
+        const arma::colvec xj = Xtilde.col(j);
+        r += xj * beta[j];
+        const double rho = arma::dot(xj, r) / nd;
+        const double bj = soft_c(rho, lambda);
+        r -= xj * bj;
+        beta[j] = bj;
+      }
+      const double obj = arma::dot(r, r) / (2.0 * nd) + lambda * arma::accu(arma::abs(beta));
+      if (std::abs(prev_obj - obj) < eps) break;
+      prev_obj = obj;
+    }
+    B.col(k) = beta;
+  }
+  return B;
 }
