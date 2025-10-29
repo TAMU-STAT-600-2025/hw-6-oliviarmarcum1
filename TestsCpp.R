@@ -43,6 +43,17 @@ stopifnot(all.equal(lasso_c(Xtilde, Ytilde, b_try2, lambda2),
 
 # Do at least 2 tests for fitLASSOstandardized function below. You are checking output agreements on at least 2 separate inputs
 #################################################
+b0 <- rep(0, p)
+
+fit_R_1 <- fitLASSOstandardized(Xtilde, Ytilde, lambda1, beta_start = b0, eps = 1e-8)
+fit_C_1 <- fitLASSOstandardized_c(Xtilde, Ytilde, lambda1, beta_start = b0, eps = 1e-8)
+stopifnot(all.equal(as.numeric(fit_R_1$beta), as.numeric(fit_C_1), tolerance = 1e-6))
+
+# warm start from previous solution, different lambda
+fit_R_2 <- fitLASSOstandardized(Xtilde, Ytilde, lambda2, beta_start = fit_R_1$beta, eps = 1e-8)
+fit_C_2 <- fitLASSOstandardized_c(Xtilde, Ytilde, lambda2, beta_start = fit_R_1$beta, eps = 1e-8)
+stopifnot(all.equal(as.numeric(fit_R_2$beta), as.numeric(fit_C_2), tolerance = 1e-6))
+
 
 # Do microbenchmark on fitLASSOstandardized vs fitLASSOstandardized_c
 ######################################################################
