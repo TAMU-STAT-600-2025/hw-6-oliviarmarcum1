@@ -57,6 +57,13 @@ stopifnot(all.equal(as.numeric(fit_R_2$beta), as.numeric(fit_C_2), tolerance = 1
 
 # Do microbenchmark on fitLASSOstandardized vs fitLASSOstandardized_c
 ######################################################################
+mb_path <- microbenchmark(
+  R_path = fitLASSOstandardized_seq(Xtilde, Ytilde, lambda_seq = lam_seq1, n_lambda = length(lam_seq1), eps = 1e-8),
+  C_path = fitLASSOstandardized_seq_c(Xtilde, Ytilde, lambda_seq = lam_seq1, eps = 1e-8),
+  times = 20
+)
+print(mb_path)
+
 
 # Do at least 2 tests for fitLASSOstandardized_seq function below. You are checking output agreements on at least 2 separate inputs
 #################################################
