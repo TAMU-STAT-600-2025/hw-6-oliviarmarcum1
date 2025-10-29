@@ -69,9 +69,28 @@ print(mb_path)
 
 # Do at least 2 tests for fitLASSOstandardized_seq function below. You are checking output agreements on at least 2 separate inputs
 #################################################
+lam_seq1 <- sort(exp(seq(log(1.2), log(0.05), length.out = 25)), decreasing = TRUE)
+lam_seq2 <- sort(exp(seq(log(2.0), log(0.1), length.out = 15)), decreasing = TRUE)
+
+path_R_1 <- fitLASSOstandardized_seq(Xtilde, Ytilde, lambda_seq = lam_seq1, n_lambda = length(lam_seq1), eps = 1e-8)
+path_C_1 <- fitLASSOstandardized_seq_c(Xtilde, Ytilde, lambda_seq = lam_seq1, eps = 1e-8)
+stopifnot(dim(path_R_1$beta_mat)[1] == p, dim(path_R_1$beta_mat)[2] == length(lam_seq1))
+stopifnot(all.equal(as.numeric(path_R_1$beta_mat), as.numeric(path_C_1), tolerance = 1e-5))
+
+path_R_2 <- fitLASSOstandardized_seq(Xtilde, Ytilde, lambda_seq = lam_seq2, n_lambda = length(lam_seq2), eps = 1e-8)
+path_C_2 <- fitLASSOstandardized_seq_c(Xtilde, Ytilde, lambda_seq = lam_seq2, eps = 1e-8)
+stopifnot(dim(path_R_2$beta_mat)[1] == p, dim(path_R_2$beta_mat)[2] == length(lam_seq2))
+stopifnot(all.equal(as.numeric(path_R_2$beta_mat), as.numeric(path_C_2), tolerance = 1e-5))
 
 # Do microbenchmark on fitLASSOstandardized_seq vs fitLASSOstandardized_seq_c
 ######################################################################
+library(microbenchmark)
+mb_path <- microbenchmark(
+  R_path = fitLASSOstandardized_seq(Xtilde, Ytilde, lambda_seq = lam_seq1, n_lambda = length(lam_seq1), eps = 1e-8),
+  C_path = fitLASSOstandardized_seq_c(Xtilde, Ytilde, lambda_seq = lam_seq1, eps = 1e-8),
+  times = 20
+)
+print(mb_path)
 
 # Tests on riboflavin data
 ##########################
