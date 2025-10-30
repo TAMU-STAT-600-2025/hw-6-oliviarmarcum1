@@ -94,7 +94,7 @@ print(mb_path)
 
 # Tests on riboflavin data
 ##########################
-require(hdi) # this should install hdi package if you don't have it already; otherwise library(hdi)
+library(hdi) # this should install hdi package if you don't have it already; otherwise library(hdi)
 data(riboflavin) # this puts list with name riboflavin into the R environment, y - outcome, x - gene erpression
 
 # Make sure riboflavin$x is treated as matrix later in the code for faster computations
@@ -112,3 +112,11 @@ microbenchmark(
   fitLASSOstandardized_seq_c(out$Xtilde, out$Ytilde, outl$lambda_seq),
   times = 10
 )
+######################### Test Output ############
+#Unit: milliseconds
+#expr
+#fitLASSOstandardized_seq(out$Xtilde, out$Ytilde, outl$lambda_seq)
+#fitLASSOstandardized_seq_c(out$Xtilde, out$Ytilde, outl$lambda_seq)
+#min        lq       mean     median        uq       max neval
+#2888.4749 2892.1724 2936.67528 2911.65420 2951.7283 3055.2771    10
+#48.0729   48.1943   48.72596   48.46945   48.8171   50.5328    10
