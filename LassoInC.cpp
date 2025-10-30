@@ -28,7 +28,7 @@ double lasso_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::
 
 // Lasso coordinate-descent on standardized data with one lamdba. Returns a vector beta.
 // [[Rcpp::export]]
-arma::colvec fitLASSOstandardized_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, double lambda, const arma::colvec& beta_start, double eps){
+arma::colvec fitLASSOstandardized_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, double lambda, const arma::colvec& beta_start, double eps = 0.001){
   // Your function code goes here
   const int n = static_cast<int>(Xtilde.n_rows);
   const int p = static_cast<int>(Xtilde.n_cols);
@@ -59,7 +59,7 @@ arma::colvec fitLASSOstandardized_c(const arma::mat& Xtilde, const arma::colvec&
 // You can assume that the supplied lambda_seq is already sorted from largest to smallest, and has no negative values.
 // Returns a matrix beta (p by number of lambdas in the sequence)
 // [[Rcpp::export]]
-arma::mat fitLASSOstandardized_seq_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::colvec& lambda_seq, double eps){
+arma::mat fitLASSOstandardized_seq_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::colvec& lambda_seq, double eps = 0.001){
   // Your function code goes here
   const int p = static_cast<int>(Xtilde.n_cols);
   const int L = static_cast<int>(lambda_seq.n_elem);
